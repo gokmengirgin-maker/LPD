@@ -84,9 +84,47 @@ export default function App() {
   const [expYear, setExpYear] = useState(19);
   const [isTemplateLoaded, setIsTemplateLoaded] = useState(false);
   const [status, setStatus] = useState({ type: '', message: '' });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
 
   const mapInstanceRef = useRef(null);
   const markerInstanceRef = useRef(null);
+
+  const handleAddressSearch = async () => {
+    if (!searchQuery.trim()) return;
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(searchQuery)}`
+      );
+      const data = await response.json();
+      if (data && data.length > 0) {
+        const latVal = parseFloat(data[0].lat);
+        const lonVal = parseFloat(data[0].lon);
+        
+        setLat(convertToDDM(latVal, false));
+        setLon(convertToDDM(lonVal, true));
+        
+        const map = mapInstanceRef.current;
+        const marker = markerInstanceRef.current;
+        if (map && marker) {
+          marker.setLatLng([latVal, lonVal]);
+          map.setView([latVal, lonVal], 13);
+        }
+        setStatus({ type: 'success', message: 'Konum bulundu!' });
+        setTimeout(() => setStatus({ type: '', message: '' }), 3000);
+      } else {
+        setStatus({ type: 'error', message: 'Adres bulunamadı.' });
+        setTimeout(() => setStatus({ type: '', message: '' }), 3000);
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus({ type: 'error', message: 'Arama sırasında bir hata oluştu.' });
+      setTimeout(() => setStatus({ type: '', message: '' }), 3000);
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
   // convertToDDM must be defined BEFORE updateCoordsFromMap (which calls it)
   const convertToDDM = (decimal, isLon = false) => {
@@ -516,42 +554,60 @@ export default function App() {
           </div>
         </main>
 
-        <section className="map-section">
-          <h2 className="section-title"><MapPin size={16} /> İnteraktif Harita</h2>
-          <div className="map-container-wrapper">
-            <div id="map"></div>
-          </div>
-        </section>
+        <div className="right-panel">
+          <section className="map-section">
+            <h2 className="section-title"><MapPin size={16} /> İnteraktif Harita</h2>
+            <div className="search-bar-wrapper">
+              <div className="input-wrapper" style={{ flex: 1 }}>
+                <input 
+                  type="text" 
+                  placeholder="Şehir, ilçe veya adres arayın..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleAddressSearch(); }}
+                />
+              </div>
+              <button className="search-btn" onClick={handleAddressSearch} disabled={isSearching}>
+                {isSearching ? 'ARANIYOR...' : 'ARA'}
+              </button>
+            </div>
+            <div className="map-container-wrapper">
+              <div id="map"></div>
+            </div>
+          </section>
 
-        <aside className="preview-panel">
-          <h2 className="section-title"><ShieldCheck size={16} /> Veri Önizleme</h2>
-          
-          <div className="preview-item">
-            <p className="preview-label">Hedef Dosya Adı</p>
-            <p className="preview-value">TTD_{date.replace(/-/g, '')}_{time.replace(/:/g, '')}.TTD</p>
-          </div>
+          <aside className="preview-panel">
+            <h2 className="section-title"><ShieldCheck size={16} /> Veri Önizleme</h2>
+            
+            <div className="preview-grid">
+              <div className="preview-item">
+                <p className="preview-label">Hedef Dosya Adı</p>
+                <p className="preview-value">TTD_{date.replace(/-/g, '')}_{time.replace(/:/g, '')}.TTD</p>
+              </div>
 
-          <div className="preview-item">
-            <p className="preview-label">Tanımlayıcı (ID)</p>
-            <p className="preview-value">{serial === '020924012448' ? format(new Date(date), 'ddMMyy') + time.replace(/:/g, '') : serial}</p>
-          </div>
+              <div className="preview-item">
+                <p className="preview-label">Tanımlayıcı (ID)</p>
+                <p className="preview-value">{serial === '020924012448' ? format(new Date(date), 'ddMMyy') + time.replace(/:/g, '') : serial}</p>
+              </div>
 
-          <div className="preview-item">
-            <p className="preview-label">Durum</p>
-            <p className="preview-value" style={{ color: isTemplateLoaded ? '#10b981' : '#f59e0b' }}>
-              {isTemplateLoaded ? 'Özel Şablon Aktif' : 'Varsayılan Şablon'}
-            </p>
-          </div>
+              <div className="preview-item">
+                <p className="preview-label">Durum</p>
+                <p className="preview-value" style={{ color: isTemplateLoaded ? '#10b981' : '#f59e0b' }}>
+                  {isTemplateLoaded ? 'Özel Şablon Aktif' : 'Varsayılan Şablon'}
+                </p>
+              </div>
 
-          <div className="preview-item" style={{ border: 'none' }}>
-            <p className="preview-label">Konum Verisi</p>
-            <p className="preview-value">{lat} / {lon}</p>
-          </div>
+              <div className="preview-item" style={{ border: 'none' }}>
+                <p className="preview-label">Konum Verisi</p>
+                <p className="preview-value">{lat} / {lon}</p>
+              </div>
+            </div>
 
-          <button className="action-btn" onClick={handleDownload}>
-            <Download size={20} /> DOSYAYI ÜRET
-          </button>
-        </aside>
+            <button className="action-btn" onClick={handleDownload}>
+              <Download size={20} /> DOSYAYI ÜRET
+            </button>
+          </aside>
+        </div>
       </div>
     </div>
   );

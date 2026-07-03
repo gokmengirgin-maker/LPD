@@ -458,13 +458,26 @@ export default function App() {
               <div className="field">
                 <label>Test Tarihi</label>
                 <div className="input-wrapper">
-                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                  <input 
+                    type="date" 
+                    value={date} 
+                    onChange={(e) => setDate(e.target.value)} 
+                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                    style={{ cursor: 'pointer' }}
+                  />
                 </div>
               </div>
               <div className="field">
                 <label>Saat</label>
                 <div className="input-wrapper">
-                  <input type="time" step="1" value={time} onChange={(e) => setTime(e.target.value)} />
+                  <input 
+                    type="time" 
+                    step="1" 
+                    value={time} 
+                    onChange={(e) => setTime(e.target.value)} 
+                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                    style={{ cursor: 'pointer' }}
+                  />
                 </div>
               </div>
             </div>

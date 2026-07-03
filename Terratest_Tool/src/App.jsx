@@ -77,7 +77,7 @@ export default function App() {
   const [projectName, setProjectName] = useState('25_05_16');
   const [serial, setSerial] = useState('020924012448');
   const [googleCoords, setGoogleCoords] = useState('');
-  const [targetEvd, setTargetEvd] = useState(34);
+  const [targetEvd, setTargetEvd] = useState('34');
   const [calMonth, setCalMonth] = useState(10);
   const [calYear, setCalYear] = useState(18);
   const [expMonth, setExpMonth] = useState(10);
@@ -229,8 +229,9 @@ export default function App() {
   }, [lat, lon]);
 
   const calculateSettlementFromEvd = (evd) => {
-    if (!evd || evd <= 0) return;
-    const sMeanMm = 22.5 / evd;
+    const numericEvd = parseFloat(evd);
+    if (isNaN(numericEvd) || numericEvd <= 0) return;
+    const sMeanMm = 22.5 / numericEvd;
     const sMeanUm = Math.round(sMeanMm * 1000);
     // Add slight natural variance
     setS1(sMeanUm + Math.floor(Math.random() * 10 - 5));
@@ -242,7 +243,7 @@ export default function App() {
     const meanUm = (v1 + v2 + v3) / 3;
     const meanMm = meanUm / 1000;
     if (meanMm > 0) {
-      setTargetEvd(parseFloat((22.5 / meanMm).toFixed(1)));
+      setTargetEvd((22.5 / meanMm).toFixed(1));
     }
   };
 
@@ -506,13 +507,20 @@ export default function App() {
               <label>Hedef Evd Değeri (MPa)</label>
               <div className="input-wrapper" style={{ border: '1px solid #8b5cf6' }}>
                 <input 
-                  type="number" 
-                  step="0.1"
+                  type="text" 
+                  inputMode="decimal"
                   value={targetEvd} 
                   onChange={(e) => {
-                    const val = parseFloat(e.target.value);
-                    setTargetEvd(val);
-                    calculateSettlementFromEvd(val);
+                    const val = e.target.value;
+                    // Comma is automatically converted to dot
+                    const cleanVal = val.replace(',', '.');
+                    // Accept empty string, numeric digits, and optionally a single decimal dot
+                    if (cleanVal === '' || /^\d*\.?\d*$/.test(cleanVal)) {
+                      setTargetEvd(cleanVal);
+                      if (cleanVal !== '' && !cleanVal.endsWith('.')) {
+                        calculateSettlementFromEvd(cleanVal);
+                      }
+                    }
                   }}
                   placeholder="Örn: 45"
                 />

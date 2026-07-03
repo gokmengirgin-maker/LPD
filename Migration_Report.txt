@@ -1,0 +1,48 @@
+# ANTIGRAVITY MIGRATION REPORT
+# Hazırlanma Tarihi: 2026-05-09
+
+Yeni bilgisayarına geçiş için izlemen gereken en hızlı ve güvenli yol aşağıdadır.
+
+## 1. Donanım Transferi (D: Sürücüsü)
+D: sürücüsündeki M.2 SSD'yi yeni bilgisayara takman harika bir fikir. 
+Şu klasörlerin doğrudan taşınmış olacak:
+- Android Projeleri (D:\Android)
+- Unity Projeleri (D:\Unity)
+- Video & Podcast İçerikleri (D:\Youtube Channels, D:\Learn Languages Podcast)
+- Diğer çalışma dosyaların.
+
+**Önemli:** Projeler taşınsa da, onları çalıştıran programları (IDE) yeni bilgisayarda C: sürücüsüne tekrar kurman gerekecek.
+
+## 2. Antigravity & AI Hafızası (KRİTİK)
+Benim (Antigravity) seninle olan tüm geçmişimi, projelerini ve hafızamı korumak için şu klasörü yeni bilgisayardaki aynı konuma kopyalamalısın:
+- **Yol:** `C:\Users\ggirg\.gemini\antigravity`
+  - `brain/`: Konuşma geçmişimiz.
+  - `knowledge/`: Senin hakkında öğrendiğim özel bilgiler.
+  - `scratch/`: Çalıştığımız geçici kodlar.
+
+## 3. Yeniden Kurulması Gereken Programlar (Checklist)
+Aşağıdaki programlar işletim sistemine (Registry) ve sistem dosyalarına bağlı olduğu için sadece D: sürücüsünü takmak yetmez, yeniden kurulmalıdır:
+
+- [ ] **Android Studio:** (C:\Program Files\Android\Android Studio)
+- [ ] **Visual Studio 2022 Community:** (C:\Program Files\Microsoft Visual Studio)
+- [ ] **Unity Hub & Unity Editors:** (Projelerin D:'de olsa da Hub'ı tekrar kurmalısın)
+- [ ] **Python:** (Scriptlerin için gerekli)
+- [ ] **Node.js & NPM:** (Web projelerin için)
+- [ ] **Git:** (Versiyon kontrolü için)
+- [ ] **VS Code:** (Eğer kullanıyorsan)
+
+## 4. Yedeklenmesi Gereken Gizli Ayarlar (C: Drive)
+Aşağıdaki klasörler kullanıcı profilinde (C:\Users\ggirg\) yer alır. Bunları taşırsan ayarların bozulmaz:
+- `.android/`: Emülatörler (AVD) ve Debug anahtarları.
+- `AppData/Local/Android/Sdk`: Android SDK dosyaları (Boyutu büyük olabilir, istersen sıfırdan da kurabilirsin ama bu klasörü taşırsan kota harcamazsın).
+- `.ssh/`: Eğer GitHub/GitLab için SSH anahtarın varsa mutlaka yedekle.
+
+## 5. Migration Stratejisi
+1. Yeni PC'ye Windows kurulumunu yap.
+2. D: sürücüsünü (M.2) tak.
+3. Android Studio, VS 2022 ve Python kurulumlarını yap.
+4. `.gemini\antigravity` klasörünü yeni PC'deki aynı konuma yapıştır.
+5. Ben (Antigravity) yeni PC'de çalışmaya başladığımda "Yolları kontrol et" de, her şeyin yerli yerinde olduğunu teyit edeyim.
+
+---
+Bu rapor Antigravity tarafından sistem analizi yapılarak oluşturulmuştur.

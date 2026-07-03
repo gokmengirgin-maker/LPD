@@ -1,0 +1,27 @@
+# Node modules
+node_modules/
+Terratest_Tool/node_modules/
+
+# Build and distribution files
+build/
+Terratest_Tool/build/
+Terratest_Tool/dist-ssr/
+
+# Local env files
+.env*.local
+
+# PyInstaller caches and specifications
+*.spec
+__pycache__/
+
+# Executable files (Compiled binaries)
+*.exe
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# OS specific files
+.DS_Store
+Thumbs.db

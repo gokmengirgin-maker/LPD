@@ -86,59 +86,10 @@ export default function App() {
   const [status, setStatus] = useState({ type: '', message: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [isAuthorized, setIsAuthorized] = useState(localStorage.getItem('terratest_auth') === 'true');
-  const [passwordInput, setPasswordInput] = useState('');
-  const [authError, setAuthError] = useState('');
 
   const mapInstanceRef = useRef(null);
   const markerInstanceRef = useRef(null);
 
-  // Disable Right-Click, F12, DevTools shortcuts, and Ctrl+U View Source
-  useEffect(() => {
-    const handleContextMenu = (e) => e.preventDefault();
-    const handleKeyDown = (e) => {
-      if (e.key === 'F12') {
-        e.preventDefault();
-      }
-      if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) {
-        e.preventDefault();
-      }
-      if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) {
-        e.preventDefault();
-      }
-      if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
-        e.preventDefault();
-      }
-    };
-
-    document.addEventListener('contextmenu', handleContextMenu);
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
-
-  const handleAuthSubmit = async () => {
-    const targetHash = '51828af52e25a8f749f0b845baff0be8c8f3a669d28a2aa9e94f03718ae59ecd'; // SHA-256 of 'lpd2026'
-    try {
-      const msgBuffer = new TextEncoder().encode(passwordInput);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-      if (hashHex === targetHash) {
-        localStorage.setItem('terratest_auth', 'true');
-        setIsAuthorized(true);
-      } else {
-        setAuthError('Hatalı şifre girdiniz. Lütfen tekrar deneyin.');
-      }
-    } catch (err) {
-      console.error(err);
-      setAuthError('Şifre doğrulanamadı.');
-    }
-  };
 
   const handleAddressSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -393,44 +344,6 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
-  if (!isAuthorized) {
-    return (
-      <div className="auth-wrapper">
-        <div className="auth-card">
-          <div className="badge" style={{ marginBottom: '16px' }}>GÜVENLİ ERİŞİM</div>
-          <h1 style={{ fontSize: '2.2rem', marginBottom: '8px' }}>Terratest Tool</h1>
-          <p className="subtitle" style={{ fontSize: '0.9rem' }}>Bu uygulamaya erişmek için şifre girmeniz gerekmektedir.</p>
-          
-          <div className="field" style={{ marginTop: '32px' }}>
-            <div className="input-wrapper" style={{ border: authError ? '1px solid #ef4444' : '1px solid var(--border-color)' }}>
-              <input 
-                type="password" 
-                placeholder="Şifreyi girin..." 
-                value={passwordInput}
-                onChange={(e) => {
-                  setPasswordInput(e.target.value);
-                  setAuthError('');
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleAuthSubmit();
-                }}
-                style={{ textAlign: 'center', letterSpacing: '0.1em', padding: '14px 16px' }}
-              />
-            </div>
-            {authError && (
-              <p style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '8px', textAlign: 'center' }}>
-                {authError}
-              </p>
-            )}
-          </div>
-          
-          <button className="action-btn" onClick={handleAuthSubmit} style={{ marginTop: '24px' }}>
-            GİRİŞ YAP
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="app-wrapper">

@@ -78,10 +78,10 @@ export default function App() {
   const [serial, setSerial] = useState('020924012448');
   const [googleCoords, setGoogleCoords] = useState('');
   const [targetEvd, setTargetEvd] = useState('34');
-  const [calMonth, setCalMonth] = useState(10);
-  const [calYear, setCalYear] = useState(18);
-  const [expMonth, setExpMonth] = useState(10);
-  const [expYear, setExpYear] = useState(19);
+  const [calMonth, setCalMonth] = useState(11);
+  const [calYear, setCalYear] = useState(2025); // 4-digit year, converted to 2-digit on write
+  const [expMonth, setExpMonth] = useState(11);
+  const [expYear, setExpYear] = useState(2026); // 4-digit year, converted to 2-digit on write
   const [isTemplateLoaded, setIsTemplateLoaded] = useState(false);
   const [status, setStatus] = useState({ type: '', message: '' });
   const [searchQuery, setSearchQuery] = useState('');
@@ -290,11 +290,11 @@ export default function App() {
     // 1. Device Serial / Date ID
     writeString(bytes, 2, serial.padEnd(12, ' '), 12);
 
-    // 2. Calibration Dates (Reverted to direct integers as they were working)
+    // 2. Calibration Dates — month direct, year as last-2-digits (0..99)
     bytes[14] = calMonth;
-    bytes[15] = calYear;
+    bytes[15] = calYear % 100;  // supports both 2-digit (25) and 4-digit (2025) input
     bytes[16] = expMonth;
-    bytes[17] = expYear;
+    bytes[17] = expYear % 100;  // supports both 2-digit (26) and 4-digit (2026) input
 
     const yy = parseInt(date.substring(2, 4));
     const mm = parseInt(date.substring(5, 7));
@@ -381,24 +381,48 @@ export default function App() {
 
             <div className="grid-2">
               <div className="field">
-                <label>Son Kalibrasyon (Ay/Yıl)</label>
+                <label>Letzte Kalibrierung (Ay / Yıl)</label>
                 <div className="grid-2">
                   <div className="input-wrapper">
-                    <input type="number" value={calMonth} onChange={(e) => setCalMonth(parseInt(e.target.value))} />
+                    <input
+                      type="number"
+                      min="1" max="12"
+                      placeholder="Ay (1-12)"
+                      value={calMonth}
+                      onChange={(e) => setCalMonth(parseInt(e.target.value) || 1)}
+                    />
                   </div>
                   <div className="input-wrapper">
-                    <input type="number" value={calYear} onChange={(e) => setCalYear(parseInt(e.target.value))} />
+                    <input
+                      type="number"
+                      min="2000" max="2099"
+                      placeholder="Yıl (örn: 2025)"
+                      value={calYear}
+                      onChange={(e) => setCalYear(parseInt(e.target.value) || 2025)}
+                    />
                   </div>
                 </div>
               </div>
               <div className="field">
-                <label>Geçerlilik (Ay/Yıl)</label>
+                <label>Ablauf Kalibrierung (Ay / Yıl)</label>
                 <div className="grid-2">
                   <div className="input-wrapper">
-                    <input type="number" value={expMonth} onChange={(e) => setExpMonth(parseInt(e.target.value))} />
+                    <input
+                      type="number"
+                      min="1" max="12"
+                      placeholder="Ay (1-12)"
+                      value={expMonth}
+                      onChange={(e) => setExpMonth(parseInt(e.target.value) || 1)}
+                    />
                   </div>
                   <div className="input-wrapper">
-                    <input type="number" value={expYear} onChange={(e) => setExpYear(parseInt(e.target.value))} />
+                    <input
+                      type="number"
+                      min="2000" max="2099"
+                      placeholder="Yıl (örn: 2026)"
+                      value={expYear}
+                      onChange={(e) => setExpYear(parseInt(e.target.value) || 2026)}
+                    />
                   </div>
                 </div>
               </div>

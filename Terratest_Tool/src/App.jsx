@@ -291,10 +291,14 @@ export default function App() {
     writeString(bytes, 2, serial.padEnd(12, ' '), 12);
 
     // 2. Calibration Dates — month direct, year as last-2-digits (0..99)
-    bytes[14] = calMonth;
-    bytes[15] = calYear % 100;  // supports both 2-digit (25) and 4-digit (2025) input
-    bytes[16] = expMonth;
-    bytes[17] = expYear % 100;  // supports both 2-digit (26) and 4-digit (2026) input
+    const cm = parseInt(calMonth) || 11;
+    const cy = parseInt(calYear) || 2025;
+    const em = parseInt(expMonth) || 11;
+    const ey = parseInt(expYear) || 2026;
+    bytes[14] = cm;
+    bytes[15] = cy % 100;
+    bytes[16] = em;
+    bytes[17] = ey % 100;
 
     const yy = parseInt(date.substring(2, 4));
     const mm = parseInt(date.substring(5, 7));
@@ -388,7 +392,7 @@ export default function App() {
                       min="1" max="12"
                       placeholder="Ay (1-12)"
                       value={calMonth}
-                      onChange={(e) => setCalMonth(parseInt(e.target.value) || 1)}
+                      onChange={(e) => setCalMonth(e.target.value)}
                     />
                   </div>
                   <div className="input-wrapper">
@@ -397,7 +401,7 @@ export default function App() {
                       min="2000" max="2099"
                       placeholder="Yıl (örn: 2025)"
                       value={calYear}
-                      onChange={(e) => setCalYear(parseInt(e.target.value) || 2025)}
+                      onChange={(e) => setCalYear(e.target.value)}
                     />
                   </div>
                 </div>
@@ -411,7 +415,7 @@ export default function App() {
                       min="1" max="12"
                       placeholder="Ay (1-12)"
                       value={expMonth}
-                      onChange={(e) => setExpMonth(parseInt(e.target.value) || 1)}
+                      onChange={(e) => setExpMonth(e.target.value)}
                     />
                   </div>
                   <div className="input-wrapper">
@@ -420,7 +424,7 @@ export default function App() {
                       min="2000" max="2099"
                       placeholder="Yıl (örn: 2026)"
                       value={expYear}
-                      onChange={(e) => setExpYear(parseInt(e.target.value) || 2026)}
+                      onChange={(e) => setExpYear(e.target.value)}
                     />
                   </div>
                 </div>

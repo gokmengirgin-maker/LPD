@@ -22,9 +22,9 @@ function writeString(bytes, offset, str, maxLen) {
   }
 }
 
-function writeWordBE(bytes, offset, val) {
-  bytes[offset] = (val >> 8) & 0xff;
-  bytes[offset + 1] = val & 0xff;
+function writeWordLE(bytes, offset, val) {
+  bytes[offset] = val & 0xff;
+  bytes[offset + 1] = (val >> 8) & 0xff;
 }
 
 function toBCD(val) {
@@ -314,16 +314,16 @@ export default function App() {
     writeString(bytes, 26, lat.padEnd(10, ' '), 10);
     writeString(bytes, 36, lon.padEnd(11, ' '), 11);
 
-    // 4. Settlements (Big Endian at precise offsets)
-    // 0xA8, 0x179, 0x1F9 are markers (usually 0x06)
-    bytes[0xA8] = 0x06;
-    writeWordBE(bytes, 0xA9, s1);
+    // 4. Settlements (μm) - Little Endian (Düşük bayt önce)
+    // Orijinal şablonda: Marker 0x06 @ 0xA7, 0x178, 0x1F8
+    bytes[0xA7] = 0x06;
+    writeWordLE(bytes, 0xA8, s1);
     
-    bytes[0x179] = 0x06;
-    writeWordBE(bytes, 0x17A, s2);
+    bytes[0x178] = 0x06;
+    writeWordLE(bytes, 0x179, s2);
     
-    bytes[0x1F9] = 0x06;
-    writeWordBE(bytes, 0x1FA, s3);
+    bytes[0x1F8] = 0x06;
+    writeWordLE(bytes, 0x1F9, s3);
 
     // 5. Scale Curves (Pulse duration usually up to 96 bytes)
     const scaleCurve = (start, end, ratio) => {

@@ -17,21 +17,18 @@ def create_ttd(output_path, serial, lat, lon, s1, s2, s3):
     bytes_data[26:36] = lat_str.encode('ascii')
     bytes_data[36:47] = lon_str.encode('ascii')
     
-    # 3. Settlements (μm) - Little Endian (Düşük bayt önce)
-    # s1 (Orijinal şablonda: 0x06 marker @ 0xA7, 1001 um = E9 03 @ 0xA8-0xA9)
-    bytes_data[0xA7] = 0x06 # Marker
-    bytes_data[0xA8] = s1 & 0xFF
+    # 3. Settlements (μm) - Big Endian (Terratest Cloud / TEOLO okuma protokolü)
+    bytes_data[0xA8] = 0x06 # Marker
     bytes_data[0xA9] = (s1 >> 8) & 0xFF
+    bytes_data[0xAA] = s1 & 0xFF
     
-    # s2 (Orijinal şablonda: 0x06 marker @ 0x178, 973 um = CD 03 @ 0x179-0x17A)
-    bytes_data[0x178] = 0x06 # Marker
-    bytes_data[0x179] = s2 & 0xFF
+    bytes_data[0x179] = 0x06 # Marker
     bytes_data[0x17A] = (s2 >> 8) & 0xFF
+    bytes_data[0x17B] = s2 & 0xFF
     
-    # s3 (Orijinal şablonda: 0x06 marker @ 0x1F8, 946 um = B2 03 @ 0x1F9-0x1FA)
-    bytes_data[0x1F8] = 0x06 # Marker
-    bytes_data[0x1F9] = s3 & 0xFF
+    bytes_data[0x1F9] = 0x06 # Marker
     bytes_data[0x1FA] = (s3 >> 8) & 0xFF
+    bytes_data[0x1FB] = s3 & 0xFF
     
     with open(output_path, 'wb') as f:
         f.write(bytes_data)
